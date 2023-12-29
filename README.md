@@ -57,7 +57,7 @@ The example is as follows.
 2023/12/29 17:52:53 UDP: avahi-daemon udp_recvmsg err="" src=0.0.0.0:5353 dst=0.0.0.0:0 rcv/snd(212992/212992)
 ```
 
-## Tested environment
+## Test environment
 
 - OS: Ubuntu 22.04 (arm64)
 - Kernel: 6.5.0-14
@@ -85,4 +85,3 @@ test conditions
 reference code
 - [cilium/ebpf: examples/fentry](https://github.com/cilium/ebpf/blob/main/examples/fentry)
 - [go-conntracer-bpf](https://github.com/yuuki/go-conntracer-bpf)
-  - `go-conntracer-bpf` uses kprobe/kretprobe and bpf Map. but, `enetmon` uses fexit and bpf ringbuffer.
