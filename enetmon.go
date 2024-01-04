@@ -246,11 +246,6 @@ func eventLoop(ctx context.Context, objs bpfObjects, program *ebpf.Program, even
 		_ = objs.Close()
 	}()
 
-	// Allow the current process to lock memory for eBPF resources.
-	if err := rlimit.RemoveMemlock(); err != nil {
-		return fmt.Errorf("removing memlock rlimit: %v", err)
-	}
-
 	lnk, err := link.AttachTracing(link.TracingOptions{Program: program})
 	if err != nil {
 		return fmt.Errorf("attaching tracing link: %v", err)
@@ -351,11 +346,15 @@ func main() {
 		os.Exit(0)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-
 	// Handle Ctrl+C.
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT)
+
+	// Allow the current process to lock memory for eBPF resources.
+	if err := rlimit.RemoveMemlock(); err != nil {
+		log.Printf("removing memlock rlimit: %v", err)
+		return
+	}
 
 	objs := bpfObjects{}
 	if err := loadBpfObjects(&objs, nil); err != nil {
@@ -363,6 +362,7 @@ func main() {
 		return
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
 	go run(ctx, cancel, tcpClose, objs)
 	go run(ctx, cancel, tcpConnect, objs)
 	// go run(ctx, cancel, tcpTcpV4Connect, objs)

@@ -158,8 +158,8 @@ static __always_inline void populate_event(struct event *evt, struct sock *sk, u
 		evt->saddr = sk->__sk_common.skc_rcv_saddr;
 		evt->daddr = sk->__sk_common.skc_daddr;
 	} else {
-		__builtin_memcpy(&evt->v6_daddr, &sk->__sk_common.skc_v6_daddr, 16);
-		__builtin_memcpy(&evt->v6_saddr, &sk->__sk_common.skc_v6_rcv_saddr, 16);
+		evt->v6_daddr = sk->__sk_common.skc_v6_daddr;
+		evt->v6_saddr = sk->__sk_common.skc_v6_rcv_saddr;
 	}
 	evt->dport = bpf_ntohs(sk->__sk_common.skc_dport);
 	evt->sport = sk->__sk_common.skc_num;
